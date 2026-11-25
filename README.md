@@ -12,25 +12,26 @@ Talk to any GitHub repo. Ask questions and get answers with highlighted code, fi
 
 Repos are ingested (code, docs, HTML, PDFs, and git commits) and split into chunks with Tree-sitter, then stored in a FAISS vector index and a SQLite full-text index, one per project. When you ask a question, the app runs a vector search, a BM25 keyword search, and a symbol-name lookup, merges the results with Reciprocal Rank Fusion, and expands them with surrounding context. It then builds a prompt with citations, sends it to the LLM, and streams back a typewriter-style answer along with its sources.
 
-
 ## Design notes
 
-- **Hybrid retrieval.** Vector search finds code by meaning, BM25 finds exact terms like error messages and variable names, and symbol-name lookup handles questions that mention a specific function or class. Their scores aren't comparable, so Reciprocal Rank Fusion merges them using only rank, which avoids tuning weights.
-- **Tree-sitter chunking.** Splitting by function and class keeps each chunk a complete unit instead of cutting code at arbitrary line counts. Files without a grammar fall back to window chunking, so nothing is silently skipped.
-- **Contextual expansion.** After retrieval, results are expanded with surrounding code so the LLM sees a match in context, not an isolated snippet.
+- **Hybrid retrieval.** Vector search finds code by meaning, BM25 finds exact terms like error messages and variable names, and symbol-name lookup handles questions that mention a specific function or class. Their raw scores aren't comparable, so Reciprocal Rank Fusion merges them by rank instead. Small hand-set weights (in `rag/retrieve.py`) favor exact symbol-name matches.
+- **Tree-sitter chunking.** Splitting by function and class keeps each chunk a complete unit instead of cutting code at arbitrary line counts. Python, JavaScript/TypeScript, Java, and Go use Tree-sitter; other files fall back to window chunking, so nothing is silently skipped.
+- **Contextual expansion.** After retrieval, the top results are expanded with neighboring chunks and their enclosing class, so the LLM sees a match in context, not an isolated snippet.
 - **One index per project.** Each repo gets its own FAISS and SQLite index, so switching projects is a clean swap, and deleting a repo means deleting one index. Incremental sync means re-indexing only reprocesses what changed.
-- **Last-3-projects registry.** Capping kept repos keeps disk and memory use predictable on a free host, and it means the demo always shows a small, curated set.
+- **Last-3-projects registry.** Capping kept repos (`MAX_PROJECTS`) keeps disk and memory use predictable on a free host, and it means the demo always shows a small, curated set.
 - **Local embeddings.** Embeddings run locally with sentence-transformers, so indexing needs no API key or per-call cost. Only answer generation calls an external LLM.
 - **Swappable LLM layer.** Gemini, OpenAI, and Anthropic go through LangChain behind one interface, so changing providers is a config change, not a code change.
-- **Citations by construction.** The prompt asks the model to cite the retrieved chunks, and citations are parsed back out so answers link to real files and line numbers.
-- **Demo-mode safeguards.** Visitors can't index anything, and per-session, daily, length, and cooldown limits keep a public demo from running up costs or being abused.
-
+- **Resilient LLM calls.** Hosted models get busy or stall, so the app retries busy errors, gives up on a silent connection after 45 seconds, and can switch to a backup model (`LLM_FALLBACK_MODEL`). If the main model fails, it is skipped for a few minutes so later questions don't wait on it. Visitors see a short message, and the real error goes to the terminal.
+- **Citations mapped to real chunks.** The prompt asks the model to cite the retrieved chunks, and those citations are parsed back out so every source shown is a real file and line range. The model can still cite imperfectly, which is why the sources are shown for checking.
+- **Demo-mode safeguards.** Visitors can't index anything, and per-session, daily, length, and cooldown limits reduce the risk of a public demo running up costs or being abused.
 
 ## Setup
 
-The commands below are for Windows. On macOS or Linux, use `source .venv/bin/activate` and `cp` instead.
+You need Python 3.11 or newer and a free Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey). The commands below are for Windows. On macOS or Linux, use `source .venv/bin/activate` and `cp` instead.
 
 ```powershell
+git clone https://github.com/<your-username>/codebase_rag.git
+cd codebase_rag
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -38,7 +39,7 @@ copy .env.example .env
 pytest
 ```
 
-After copying `.env.example`, open `.env` and set `GOOGLE_API_KEY`. Running `pytest` is optional; it checks the core logic and needs no downloads.
+After copying `.env.example`, open `.env` and set `GOOGLE_API_KEY`. Model names change over time, so run `python scripts/check_setup.py` and set `GEMINI_MODEL` to a model it reports as working. Running `pytest` is optional; it checks the core logic and needs no downloads.
 
 ## Usage
 
@@ -51,19 +52,31 @@ python scripts/reindex.py --repo https://github.com/owner/name
 Then start the app:
 
 ```powershell
-streamlit run app/streamlit_app.py
+python -m streamlit run app/streamlit_app.py
 ```
 
 The first index downloads a small embedding model (about 130 MB). The sidebar's project list switches between the kept repos, and switching starts a fresh chat.
 
-Optional personal mode: set `DEMO_MODE=false` in `.env` and restart to get the repo box, indexing buttons, filters, and retrieval settings in the sidebar. Indexing from there works the same way and keeps the last 3 repos.
+By default the app runs in demo mode: visitors can only ask questions, within per-session and daily limits (see the bottom of `.env.example`). For personal use, set `DEMO_MODE=false` in `.env` and restart to get the repo box, indexing buttons, filters, and retrieval settings in the sidebar. Indexing from there works the same way and keeps the last 3 repos.
 
+## Troubleshooting
+
+If answers fail or hang, run `python scripts/check_setup.py`. It tests the search, your Gemini key and model, streaming, and the backup model separately, and shows which one is failing.
+
+## Limitations
+
+- Answers come only from the indexed content, and the LLM can still be wrong, so check the sources.
+- Only the most recent 300 commits are indexed (`MAX_COMMITS`), and files over 5 MB are skipped.
+- PDFs are read as text only, with no OCR, so scanned PDFs are not searchable.
+- Private repos need to be cloned first and indexed from the local folder.
+- Free Gemini tiers have rate limits, and models can be overloaded at busy times.
 
 ## Project layout
 
 - `app/streamlit_app.py`: entry point.
 - `app/ui/`: helpers, sidebar, home (cover page), chat, sources, and limits.
 - `app/ui/styles/`: `base.css`, `cover.css`, `chat.css`, and `widgets.css`.
+- `rag/config.py`: settings read from `.env`.
 - `rag/ingest.py`: repo clone/update, file walking (.gitignore aware), PDF text, and git commits.
 - `rag/parse.py`: Tree-sitter chunking plus fallbacks.
 - `rag/embed.py`: local embeddings (sentence-transformers).
@@ -72,9 +85,11 @@ Optional personal mode: set `DEMO_MODE=false` in `.env` and restart to get the r
 - `rag/usage.py`: shared daily question counter.
 - `rag/retrieve.py`: vector, keyword, and name retrieval, RRF, and contextual expansion.
 - `rag/prompt.py`: query construction and citation parsing.
-- `rag/llm.py`: Gemini, OpenAI, or Anthropic via LangChain, with retries.
-- `rag/pipeline.py`: orchestration (the `Engine`).
-- `scripts/reindex.py`: CLI indexer (also used by CI).
+- `rag/llm.py`: Gemini, OpenAI, or Anthropic via LangChain, with retries and a response deadline.
+- `rag/pipeline.py`: orchestration (the `Engine`), including the backup-model logic.
+- `scripts/reindex.py`: command-line indexer.
+- `scripts/check_setup.py`: health check for the search and the LLM.
+- `.env.example`: all settings with their defaults.
 - `.streamlit/config.toml`: base dark theme.
 - `tests/`: unit tests using a fake embedder.
 
@@ -84,4 +99,4 @@ Optional personal mode: set `DEMO_MODE=false` in `.env` and restart to get the r
 - **UI:** Streamlit, custom CSS
 - **Retrieval:** Tree-sitter, FAISS, SQLite FTS5, sentence-transformers
 - **LLM:** Gemini Flash (default), OpenAI, Anthropic, via LangChain
-- **Tooling:** pytest, GitHub Actions
+- **Tooling:** pytest
