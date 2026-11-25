@@ -59,17 +59,6 @@ The first index downloads a small embedding model (about 130 MB). The sidebar's 
 
 By default the app runs in demo mode: visitors can only ask questions, within per-session and daily limits (see the bottom of `.env.example`). For personal use, set `DEMO_MODE=false` in `.env` and restart to get the repo box, indexing buttons, filters, and retrieval settings in the sidebar. Indexing from there works the same way and keeps the last 3 repos.
 
-## Troubleshooting
-
-If answers fail or hang, run `python scripts/check_setup.py`. It tests the search, your Gemini key and model, streaming, and the backup model separately, and shows which one is failing.
-
-## Limitations
-
-- Answers come only from the indexed content, and the LLM can still be wrong, so check the sources.
-- Only the most recent 300 commits are indexed (`MAX_COMMITS`), and files over 5 MB are skipped.
-- PDFs are read as text only, with no OCR, so scanned PDFs are not searchable.
-- Private repos need to be cloned first and indexed from the local folder.
-- Free Gemini tiers have rate limits, and models can be overloaded at busy times.
 
 ## Project layout
 
