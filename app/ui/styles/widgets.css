@@ -1,0 +1,140 @@
+
+.stButton > button,
+button[data-testid="stBaseButton-secondary"] {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: .35rem .6rem;
+  line-height: 1.3;
+  text-align: left;
+  transition: border-color .15s;
+}
+
+.stButton > button p {
+  width: 100%;
+  font-size: 0.8rem;
+  text-align: left;
+  color: inherit !important;
+}
+
+.stButton > button:hover {
+  background: var(--panel);
+  border-color: var(--green);
+  color: var(--text);
+}
+
+
+.stButton > button[kind="primary"],
+button[data-testid="stBaseButton-primary"] {
+  background: var(--text);
+  border-color: var(--text);
+  color: #000;
+}
+.stButton > button[kind="primary"]:hover,
+button[data-testid="stBaseButton-primary"]:hover {
+  background: #ffffff;
+  color: #000;
+}
+
+
+.st-key-home_btn button {
+  justify-content: flex-start;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+.st-key-home_btn button p {
+  font-family: var(--font-display) !important;
+  font-size: 1.8rem !important;
+  line-height: 1.1;
+  color: var(--text) !important;
+}
+.st-key-home_btn button:hover p { color: var(--green) !important; }
+
+
+div[data-testid="stVerticalBlockBorderWrapper"] {
+  background: var(--card);
+  border-color: var(--border) !important;
+  border-radius: 4px !important;
+}
+
+[data-testid="stExpander"] {
+  background: var(--card);
+  border: 1px solid var(--border) !important;
+  border-radius: 4px !important;
+}
+[data-testid="stExpander"] details,
+[data-testid="stExpander"] summary,
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] {
+  background: var(--card) !important;
+  color: var(--text) !important;
+}
+[data-testid="stExpander"] summary p,
+[data-testid="stExpander"] summary span { color: var(--text) !important; }
+[data-testid="stExpander"] summary:hover { color: var(--green); }
+
+
+[data-testid="stTextInput"] [data-baseweb="input"],
+[data-testid="stTextInput"] [data-baseweb="base-input"] {
+  background: var(--panel) !important;
+  border-color: var(--border) !important;
+  border-radius: 4px !important;
+}
+
+[data-testid="stTextInput"] input {
+  padding: .5rem .7rem;
+  font-size: 0.88rem;
+  background: transparent !important;
+  color: var(--text) !important;
+}
+
+[data-testid="stTextInput"] input::placeholder,
+textarea::placeholder {
+  color: var(--muted) !important;
+  opacity: 1;
+}
+
+
+[data-testid="InputInstructions"] { display: none !important; }
+
+
+[data-testid="stWidgetLabel"],
+[data-testid="stWidgetLabel"] p,
+[data-testid="stSidebar"] label { color: var(--text) !important; }
+
+[data-baseweb="select"] > div {
+  background: var(--panel) !important;
+  border-color: var(--border) !important;
+  border-radius: 4px !important;
+}
+[data-baseweb="select"] div,
+[data-baseweb="select"] input,
+[data-baseweb="select"] span { color: var(--text) !important; }
+
+[data-baseweb="tag"] { background: var(--green-dim) !important; }
+[data-baseweb="tag"] span { color: var(--text) !important; }
+
+
+[data-baseweb="popover"] > div,
+[data-baseweb="popover"] ul,
+[data-baseweb="menu"],
+[data-baseweb="popover"] li,
+[data-baseweb="menu"] li {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+}
+[data-baseweb="popover"] li:hover { background: #222222 !important; }
+
+
+[data-baseweb="tab"],
+[data-baseweb="tab"] p { color: var(--muted) !important; }
+[data-baseweb="tab"][aria-selected="true"],
+[data-baseweb="tab"][aria-selected="true"] p { color: var(--text) !important; }
+
+[data-testid="stCode"] {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+[data-testid="stCode"],
+[data-testid="stCode"] pre { background: #000 !important; }

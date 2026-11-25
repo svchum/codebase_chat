@@ -1,0 +1,86 @@
+
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  color-scheme: dark;
+
+  /* colors */
+  --bg: #0a0a0a;
+  --side: #000000;
+  --card: #111111;
+  --panel: #161616;
+  --border: #2c2c2c;
+  --text: #e8e8e8;
+  --muted: #8c8c8c;
+  --green: #7fb88a;
+  --green-dim: #35563d;
+
+
+  --font-display: 'VT323', 'Courier New', monospace;
+  --font-body: 'IBM Plex Mono', 'Cascadia Mono', Consolas, 'Courier New', monospace;
+
+  --chat-font-size: 0.95rem;   
+  --user-bubble-width: 70%;   
+  --answer-width: 92%;       
+}
+
+html, body, .stApp,
+.stApp .stMarkdown, .stApp .stMarkdown *,
+.stApp :is(p, li, label, input, textarea, button, small, h1, h2, h3, h4, h5, h6),
+[data-testid="stSidebar"] :is(p, label, input, textarea, button, small, h1, h2, h3, h4),
+[data-testid="stCaptionContainer"], code, pre, pre * {
+  font-family: var(--font-body) !important;
+}
+
+
+.stApp .stMarkdown :is(.cc-title, .cc-sub, .cc-status, .cc-label, .cc-step b, .cc-card-t) {
+  font-family: var(--font-display) !important;
+  font-weight: 400;
+}
+
+.stApp {
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.block-container {
+  padding-top: 2rem;
+  padding-bottom: 7rem;
+}
+
+[data-testid="stSidebar"] {
+  background: var(--side);
+  border-right: 1px solid var(--border);
+}
+
+header[data-testid="stHeader"] { background: transparent; }
+
+
+footer, #MainMenu, .stAppDeployButton, [data-testid="stDecoration"] { display: none !important; }
+
+.stApp .stMarkdown p,
+.stApp .stMarkdown li { font-size: 0.95rem; }
+
+[data-testid="stSidebar"] :is(p, label, small) { font-size: 0.88rem; }
+
+.stApp .stMarkdown :is(p, li, strong, em, h1, h2, h3, h4, h5, h6, td, th, blockquote) {
+  color: var(--text);
+}
+
+h1, h2, h3, h4 {
+  color: var(--text);
+  font-weight: 500;
+}
+
+a { color: var(--green) !important; }
+hr { border-color: var(--border); }
+::selection { background: var(--green); color: #000; }
+
+[data-testid="stCaptionContainer"], .stCaption {
+  color: var(--muted) !important;
+  font-size: 0.8rem;
+}
+
+code, pre, pre * { font-size: 0.85rem !important; }
