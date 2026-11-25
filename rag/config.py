@@ -55,7 +55,7 @@ class Config:
     max_commits: int = field(default_factory=lambda: int(os.getenv("MAX_COMMITS", "300")))
     top_k: int = field(default_factory=lambda: int(os.getenv("TOP_K", "8")))
     max_file_bytes: int = 5_000_000
-    max_projects: int = field(default_factory=lambda: int(os.getenv("MAX_PROJECTS", "3")))  # indexes kept
+    max_projects: int = field(default_factory=lambda: int(os.getenv("MAX_PROJECTS", "3"))) 
 
     # Demo mode
     demo_mode: bool = field(default_factory=lambda: _bool("DEMO_MODE", True))
