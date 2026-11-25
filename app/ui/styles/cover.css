@@ -1,0 +1,105 @@
+
+
+.cc-hero {
+  text-align: center;
+  margin: 3rem 0 .3rem;
+}
+
+.stApp .stMarkdown .cc-title {
+  font-size: clamp(2.2rem, 8vw, 4rem);
+  color: var(--text);
+  line-height: 1.1;
+  display: inline-block;
+  white-space: nowrap;
+  margin: 0;
+  padding: 0;
+  animation: cc-reveal 1.5s steps(12, end) 1 both;
+}
+
+.stApp .stMarkdown .cc-title::after {
+  content: "";
+  display: inline-block;
+  width: .08em;
+  height: .8em;
+  margin-left: .08em;
+  background: var(--text);
+  opacity: 0;
+  animation: cc-blink .8s step-end 1.5s 3 forwards;
+}
+
+.stApp .stMarkdown .cc-sub {
+  color: var(--muted);
+  font-size: 1.4rem;
+  margin: .4rem 0 0;
+  opacity: 0;
+  animation: cc-fade .8s ease 1.5s forwards;
+}
+
+@keyframes cc-reveal { from { clip-path: inset(0 100% 0 0) } to { clip-path: inset(0 0 0 0) } }
+@keyframes cc-blink  { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+@keyframes cc-fade   { to { opacity: 1 } }
+
+.stApp .stMarkdown .cc-intro {
+  color: var(--text);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  max-width: 680px;
+  margin: 1.6rem auto 1rem;
+  text-align: center;
+  opacity: .85;
+}
+
+.stApp .stMarkdown .cc-status {
+  color: var(--muted);
+  font-size: 1.25rem;
+  margin: 0 0 1.2rem;
+  text-align: center;
+}
+.stApp .stMarkdown .cc-status b { color: var(--green); }
+
+
+.cc-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .8rem;
+  margin: 1rem 0 1.4rem;
+}
+
+.cc-step {
+  flex: 1 1 200px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: .7rem 1rem;
+}
+
+.stApp .stMarkdown .cc-step b {
+  color: var(--green);
+  font-size: 1.4rem;
+}
+
+.stApp .stMarkdown .cc-step small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin-top: .15rem;
+}
+
+.stApp .stMarkdown .cc-label {
+  color: var(--text);
+  font-size: 1.25rem;
+  margin: .4rem 0 .2rem;
+}
+
+.stApp .stMarkdown .cc-card-t {
+  font-size: 1.35rem;
+  margin-bottom: .1rem;
+}
+
+.stApp .stMarkdown .cc-card-d {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin-bottom: .5rem;
+}
