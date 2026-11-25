@@ -1,10 +1,12 @@
-# CodebaseChat
-
-Talk to any GitHub repo. Ask questions and get answers with highlighted code, file names, line numbers, and GitHub links. Built with Streamlit, Tree-sitter, FAISS, SQLite (FTS5), and a swappable LLM (Gemini Flash by default).
 
 ## Demo
 
 [![CodebaseChat Demo](https://img.youtube.com/vi/zqC93AGlNYY/maxresdefault.jpg)](https://youtu.be/zqC93AGlNYY)
+
+# CodebaseChat
+
+Talk to any GitHub repo. Ask questions and get answers with highlighted code, file names, line numbers, and GitHub links. Built with Streamlit, Tree-sitter, FAISS, SQLite (FTS5), and a swappable LLM (Gemini Flash by default).
+
 
 ## How it works
 
